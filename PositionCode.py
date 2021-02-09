@@ -25,4 +25,5 @@ lat_rang = [29.55, 30.1]
 lon_rang = [121.9, 122.45]
 newTemp = positionConvert(temp)
 H = hilbertEncode(newTemp)
+b=1
 a=1
