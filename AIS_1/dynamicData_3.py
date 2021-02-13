@@ -13,8 +13,8 @@ import pandas as pd
 import time
 import os
 #D:\论文数据\originDynamic
-path1 = r'D:/论文数据/originDynamic'
-path2 = r'D:/论文数据/dynamicNofilter'
+path1 = r'/media/mty/My Passport/PCDocument/DataInPaper/originDynamic'
+path2 = r'/home/mty/data/dynamicNofilter'
 path_list = os.listdir(path1)
 path_list.sort(key=lambda x:int(x[6:-4]))
 inputFile = [path1+'/'+i for i in path_list]
@@ -52,7 +52,7 @@ for i in range(0,len(path_list),1):
             chunk['lon']=chunk['lon'].astype('float')
             chunk['lat']=chunk['lat'].astype('float')
             chunk['COG']=chunk['COG'].astype('float')
-            chunk=chunk.loc[(chunk.lat>=29.8) & (chunk.lat<=30) & (chunk.lon>=122.1) & (chunk.lon<=122.25) & (chunk.COG>=0) & (chunk.COG<=360)]
+            chunk=chunk.loc[(chunk.lat>=29.35) & (chunk.lat<=30.3) & (chunk.lon>=121.7) & (chunk.lon<=123.15) & (chunk.COG>=0) & (chunk.COG<=360)]
             #   筛选范围如下:
             #   纬度范围(29.8~30)=(29°48′-30°00′)
             #   经度范围(122.1~122.25)=(122°06′-122°15′)

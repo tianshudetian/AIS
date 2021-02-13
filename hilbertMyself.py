@@ -28,7 +28,7 @@ def draw_curve(ax, num_bits, num_dims):
         ax.set_xticks(range(0, pow(2, num_bits)+1, num_bits-1))
         ax.set_yticks(range(0, pow(2, num_bits)+1, num_bits-1))
     ax.set_aspect('equal')
-    ax.set_tle('%d bits per dimension' % (num_bits))
+    ax.set_title('%d bits per dimension' % (num_bits))
     ax.set_xlabel('xlabel')
     ax.set_ylabel('ylabel')
 

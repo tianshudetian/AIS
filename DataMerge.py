@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 from multiprocessing import Pool
+from AIS import AIScrawler
+
 def getfile(inputpath):
     pathList = os.listdir(inputpath)
     inputFileLIst = []
@@ -29,6 +31,10 @@ def datamerge(inputfile):
                 print('Search exception: ' + str(MMSI))
             else:
                 failMatchStatic.append(MMSI)
+        crawler = AIScrawler(failMatchStatic)
+        crawler.requestShipxy()
+        StaticAnother = crawler.newdata
+        newStatic.append(StaticAnother)
         newStatic = pd.concat(newStatic, ignore_index=True)
         newData = pd.merge(DynamicData, newStatic, on='MMSI')
         newData.to_csv(outputfile, sep=',', header=True, index=0)

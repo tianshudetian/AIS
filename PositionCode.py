@@ -21,7 +21,7 @@ def hilbertEncode(data):
 
 
 # if __name__=="__main__":
-df = pd.read_csv(r'/home/mty/data/processedData/20181024Processed.csv')
+df = pd.read_csv(r'/home/mty/data/dynamic/20181001.csv')
 Timestamps = list(set(df['timestamp']))
 # for timestamp in Timestamps:
 timestamp = Timestamps[10]
