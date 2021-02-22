@@ -28,12 +28,12 @@ def draw_curve(ax, num_bits):
         ax.set_xticks(range(0, pow(2, num_bits)+1, num_bits-1))
         ax.set_yticks(range(0, pow(2, num_bits)+1, num_bits-1))
     ax.set_aspect('equal')
-    ax.set_title('%d bits per dimension' % (num_bits))
-    ax.set_xlabel('xlabel')
-    ax.set_ylabel('ylabel')
+    ax.set_title('%d bits per dimension' % (num_bits), fontdict={ 'size': 16})
+    ax.set_xlabel('xlabel', fontdict={'size': 16})
+    ax.set_ylabel('ylabel', fontdict={'size': 16})
 
 
-fig = plt.figure(figsize=(16, 4))
+fig = plt.figure(figsize=(20, 5))
 for ii, num_bits in enumerate([2, 3, 4, 5]):
     ax = fig.add_subplot(1, 4, ii+1)
     draw_curve(ax, num_bits)

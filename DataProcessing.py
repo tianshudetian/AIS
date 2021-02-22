@@ -12,10 +12,12 @@ def datafilter(data):
     # hoose the conflict detective time
     time1 = timeStamp + 60 * 60 * 14 - 60 * 60 * timeArray.tm_hour - 60 * timeArray.tm_min - timeArray.tm_sec
     time2 = time1 - 3 * 60
-    newData = data.loc[(data['timestamp'] >= time2) & (data['timestamp'] <= time1) & (data['SOG'] >= 2.0 )]
+    newData = data.loc[(data['timestamp'] >= time2) & (data['timestamp'] <= time1) & (data['SOG'] >= 2.0) &
+                       (data['lon'] >= lonRange[0]) & (data['lon'] <= lonRange[-1]) & (data['lat'] >= latRange[0]) &
+                       (data['lat'] <= latRange[-1])]
     time11 = time.localtime(time1)
     otherStyleTime1 = time.strftime("%Y--%m--%d %H:%M:%S", time11)
-    print('time1: '+str(otherStyleTime1))
+    print('The choosen time: '+str(otherStyleTime1))
     return newData, time1
 
 def cubic(data, T):
@@ -30,16 +32,26 @@ def cubic(data, T):
     lon_new = cs2(x_new) + min(lon)
     return lat_new[-1], lon_new[-1]
 
+def cordi(data):
+    df = data.copy()
+    df1, T = datafilter(df)
+    MMSIs = list(set(df1['MMSI']))
+    cordinate = []
+    for MMSI in MMSIs:
+        data = df1[df1['MMSI'].isin([MMSI])]
+        tem1 = data.drop_duplicates(subset='timestamp', keep='first')
+        tem2 = tem1.sort_values(by='timestamp')
+        if tem2.shape[0] > 1:
+            latInterpolate, lonInterpolate = cubic(tem2, T)
+            cordinate.append([MMSI, latInterpolate, lonInterpolate])
+    return cordinate
+
 filepath = r'/home/mty/data/dynamic/20181001.csv'
 df = pd.read_csv(filepath)
-df1, T = datafilter(df)
-MMSIs = list(set(df1['MMSI']))
-# for MMSI in MMSIs:
-MMSI = MMSIs[0]
-data = df1[df1['MMSI'].isin([MMSI])]
-tem = data.drop_duplicates(subset='timestamp', keep='first')
-tem.sort_values(by='timestamp', inplace=True)
-# latInterpolate, lonInterpolate = cubic(tem, T)
+lonRange = [121.7, 123.15]
+latRange = [29.35, 30.3]
+cordinate = cordi(df)
+
 # lon = tem['lon']
 # lat = tem['lat']
 # X = (lon - min(lon))/(max(lon)-min(lon))+0.1
