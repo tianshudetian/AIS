@@ -53,6 +53,5 @@ def Knear(loc, K, num_bits):
     for i in x:
         for j in y:
             B = [i, j]
-            if B != loc:
-                nearLoc.append(B)
+            nearLoc.append(B)
     return nearLoc
