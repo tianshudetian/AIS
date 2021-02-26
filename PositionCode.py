@@ -126,27 +126,35 @@ def straConflict(data):
             lat2 = radians(newRow.lat)
             lon2 = radians(newRow.lon)
             dis, brng = dis_brng(lat1, lat2, lon1, lon2)
-            Result.append([row.MMSI, newRow.MMSI], [dis, brng])
+            Result.append([[row.MMSI, newRow.MMSI], [dis, brng]])
     return Result
+
+def ellipseDomain(a=3.5, b=8):
+    x = np.arange(-a, a+0.1, 0.1)
+    abs_y = [b*sqrt(1-(round(X, 1)/a)**2) for X in x]
+    negative_y = [0-y for y in abs_y]
+    pint_positive = np.array([[x[i], abs_y[i]] for i in np.arange(len(x))])
+    point_negative = np.array([[x[i], negative_y[i]] for i in np.arange(len(x))])
+    point = np.vstack((point_negative, pint_positive))
+    Points = np.array([i for n, i in enumerate(point) if i not in point[:n]])
+    return Points
 
 # if __name__=="__main__":
 df = pd.read_csv(r'/home/mty/data/dynamic/20181001.csv')
-# Timestamps = list(set(df['timestamp']))
-# # for timestamp in Timestamps:
-# timestamp = Timestamps[10]
-# temp = df[df['timestamp'].isin([timestamp])]
 Ganularity = 6
 Dimension = 2
 K = 2
 latRange = [29.55, 30.1]
 lonRange = [121.9, 122.45]
 cordinate = cordi(df)
-straConf = straConflict(cordinate)
+# straConf = straConflict(cordinate)
 
-# print('count of ship: '+str(len(cordinate)))
-# newTemp = positionConvert(cordinate)
-# encodeTemp = hilbertEncode(newTemp)
-# preConf = preConflict(encodeTemp)
+print('count of ship: '+str(len(cordinate)))
+newTemp = positionConvert(cordinate)
+encodeTemp = hilbertEncode(newTemp)
+preConf = preConflict(encodeTemp)
+
+basicDomin = ellipseDomain(a=3.5, b=8)
 # cordinate_display(cordinate)
 # encoding_display(newTemp)
 # plt.show()
