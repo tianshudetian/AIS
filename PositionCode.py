@@ -1,6 +1,7 @@
 import pandas as pd
 from hilbert import decode, encode
 import matplotlib.pyplot as plt
+from matplotlib.path import Path
 from hilbertMyself import draw_curve, Knear
 import time
 from scipy.interpolate import CubicSpline
@@ -133,12 +134,15 @@ def ellipseDomain(a=3.5, b=8):
     x = np.arange(-a, a+0.1, 0.1)
     abs_y = [b*sqrt(1-(round(X, 1)/a)**2) for X in x]
     negative_y = [0-y for y in abs_y]
-    pint_positive = np.array([[x[i], abs_y[i]] for i in np.arange(len(x))])
+    point_positive = np.array([[x[i], abs_y[i]] for i in np.arange(len(x))])
     point_negative = np.array([[x[i], negative_y[i]] for i in np.arange(len(x))])
-    point = np.vstack((point_negative, pint_positive))
-    Points = np.array([i for n, i in enumerate(point) if i not in point[:n]])
+    point = pd.DataFrame(np.vstack((point_negative, point_positive[::-1])))
+    Points = point.drop_duplicates()
     return Points
 
+def domain(ship_length, Points):
+    boundary = Points.apply(lambda x: x*ship_length)
+    return boundary
 # if __name__=="__main__":
 df = pd.read_csv(r'/home/mty/data/dynamic/20181001.csv')
 Ganularity = 6
@@ -153,8 +157,8 @@ print('count of ship: '+str(len(cordinate)))
 newTemp = positionConvert(cordinate)
 encodeTemp = hilbertEncode(newTemp)
 preConf = preConflict(encodeTemp)
+basicDomin = ellipseDomain(a=3.5, b=8) # generate the basic domain (L=1)
 
-basicDomin = ellipseDomain(a=3.5, b=8)
 # cordinate_display(cordinate)
 # encoding_display(newTemp)
 # plt.show()
