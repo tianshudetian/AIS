@@ -13,7 +13,6 @@ def diff_over_threshold(list):
 
 def cubic(x_list,y_list):
     x = x_list - x_list[0]
-    print(x)
     y = y_list - y_list[0]
     cs = CubicSpline(x, y)
     x_new = np.arange(0, x_list[-1]+1, 2)
