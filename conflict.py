@@ -28,9 +28,11 @@ def hilbertEncode(data, Ganularity):
     tem['H'] = H
     return tem
 
-def datafilter(data):
-    newData = data.loc[(data['SOG'] >= 2.0) & (data['lon'] >= lonRange[0]) &
-                       (data['lon'] <= lonRange[-1]) & (data['lat'] >= latRange[0]) &
+def datafilter(data,T):
+    time1 = T
+    time2 = time1 - 1 * 60
+    newData = data.loc[(data['timestamp'] >= time2) & (data['timestamp'] <= time1+30) & (data['SOG'] >= 2.0) &
+                       (data['lon'] >= lonRange[0]) & (data['lon'] <= lonRange[-1]) & (data['lat'] >= latRange[0]) &
                        (data['lat'] <= latRange[-1])]
     return newData
 
@@ -46,30 +48,21 @@ def cubic(data, T):
     lon_new = cs2(x_new) + min(lon)
     return lat_new[-1], lon_new[-1]
 
-def trajectory_display(data1, data2, T, MMSI):
-    fig = plt.figure(figsize=(10, 5))
-    fig.suptitle('MMSI: '+str(MMSI),fontsize=14)
-    ax1 = fig.add_subplot(1,2,1)
-    ax1.scatter(T, data1[0], marker='*', c='red')
-    ax1.scatter(data2['timestamp'], data2['lon'], marker='^', c='blue')
-    ax1.set_xlabel('Time',fontsize=14)
-    ax1.set_ylabel('Longitude',fontsize=14)
-    ax2 = fig.add_subplot(1,2,2)
-    ax2.scatter(T, data1[1], marker='*', c='red')
-    ax2.scatter(data2['timestamp'], data2['lat'], marker='^', c='blue')
-    ax2.set_xlabel('Time',fontsize=14)
-    ax2.set_ylabel('Latitude',fontsize=14)
-
-def cordi(data, timestamp):
-    MMSIs = list(set(data['MMSI']))
+def cordi(data, T):
+    df1 = data.copy()
+    MMSIs = list(set(df1['MMSI']))
     cordinate = []
     for index, MMSI in enumerate(MMSIs):
-        data = data[data['MMSI'].isin([MMSI])]
+        data = df1[df1['MMSI'].isin([MMSI])]
         tem1 = data.drop_duplicates(subset='timestamp', keep='first')
         tem2 = tem1.sort_values(by='timestamp')
-        temp = tem2.loc[(tem2['timestamp']<=timestamp)]
+        temp = tem2.loc[(tem2['timestamp']<=T)]
         if temp.shape[0] > 2:
-            latInterpolate, lonInterpolate = cubic(tem2, timestamp)
+            latInterpolate, lonInterpolate = cubic(tem2, T)
+            # if index == 10 or index == 50:
+            #     tem3 = [lonInterpolate, latInterpolate]
+            #     tem4 = df.loc[(df['MMSI'] == MMSI) & (df['timestamp'] >= T-60) & (df['timestamp'] <= T+30)]
+            #     trajectory_display(tem3, tem4, T, MMSI)
             cog = list(tem2.COG)[-1]
             cordinate.append([MMSI, latInterpolate, lonInterpolate, cog])
     cordinate = pd.DataFrame(cordinate, columns=['MMSI', 'lat', 'lon', 'cog'])
@@ -188,48 +181,52 @@ def conflict(couple):
     else:
         return state
 
-def conflict_detect(data):
+def conflict_detect1(data):
     Indexs = []
     for index, couple in enumerate(data):
         if conflict(couple) == 1:
             Indexs.append(index)
     return len(Indexs)
 
+def conflict_detect2(data, num):
+    with Pool(num) as p:
+        states = p.map(conflict, data)
+        count = 0
+        for state in states:
+            if state == 1:
+                count = count + 1
+    return count
+
+def direct(cordinate):
+    straConf = straConflict(cordinate)
+    straConf_num = conflict_detect1(straConf)
+    return straConf_num
+
 def indirect(cordinate):
     result = []
-    K = 4
+    K = 6
     Ganularity = 8
     newTemp = positionConvert(cordinate, Ganularity)
     encodeTemp = hilbertEncode(newTemp, Ganularity)
     preConf = preConflict(encodeTemp, K)
-    preConf_num = conflict_detect(preConf)
-    if preConf_num >= 1:
-        print(preConf_num)
+    preConf_num = conflict_detect1(preConf)
     return preConf_num
 
 # if __name__=="__main__":
-df = pd.read_csv(r'/home/mty/data/processed2s/20181001(2s)Processed.csv')
-df.rename(columns={'COG':'cog', 'length':'Length'}, inplace=True)
-# df = origin_df.iloc[:1000, :]
+df = pd.read_csv(r'/home/mty/data/dynamic/20181001.csv')
+basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
 len_df = len_dataset(df)
 Dimension = 2
 latRange = [29.55, 30.1]
 lonRange = [121.9, 122.45]
-basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
-new_df = datafilter(df)
-Timestamps = new_df['timestamp'].unique()
-for timestamp in Timestamps:
-    df1 = new_df[new_df['timestamp'].isin([timestamp])]
-
-    # df1 = new_df.loc[(new_df['timestamp'] >= timestamp - 60) & (new_df['timestamp'] <= timestamp)]
-    # if df1.shape[0] >= 10:
-    #     cordinate = cordi(df1, timestamp)
-    #     Result = indirect(cordinate)
-# b=pd.DataFrame(Result)
-# b.to_csv(r'/home/mty/result_test.csv')
-# boundary = domain(100, basicDomin)
-# cordinate_display(cordinate)
-# encoding_display(newTemp)
-# plt.show()
-# H = hilbertEncode(newTemp)
-a=1
+Timestamps = list(df['timestamp'].unique())
+new_time = np.arange(Timestamps[0], Timestamps[-1]+1, 60)
+Result = []
+for index, T in enumerate(new_time):
+    if index >= 1:
+        df1 = datafilter(df,T)
+        cordinate = cordi(df1, T)
+        Res = indirect(cordinate)
+        Result.append([Res, T])
+b=pd.DataFrame(Result)
+b.to_csv(r'/home/mty/conflictNUM.csv')

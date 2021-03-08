@@ -229,8 +229,8 @@ def direct(cordinate):
 
 def indirect1(cordinate):
     result = []
-    for K in np.arange(1, 5, 1):
-        for Ganularity in np.arange(2, 10, 1):
+    for K in np.arange(1, 7, 1):
+        for Ganularity in np.arange(2, 11, 1):
             start_time_pre = time.time()
             newTemp = positionConvert(cordinate, Ganularity)
             encodeTemp = hilbertEncode(newTemp, Ganularity)
@@ -286,15 +286,16 @@ Dimension = 2
 latRange = [29.55, 30.1]
 lonRange = [121.9, 122.45]
 cordinate = cordi(df)
-print('count of ship: '+str(len(cordinate)))
+# print('count of ship: '+str(len(cordinate)))
 basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
-# Num_stra_conf, Time_stra_conf = direct(cordinate)
-# print(Time_stra_conf)
-# print(Num_stra_conf)
-# Result = indirect2(cordinate)
-Result = indirect2(cordinate)
-b=pd.DataFrame(Result)
-b.to_csv(r'/home/mty/result10.csv')
+Num_stra_conf, Time_stra_conf = direct(cordinate)
+print(Time_stra_conf)
+print(Num_stra_conf)
+# # Result = indirect2(cordinate)
+# Result = indirect1(cordinate)
+# b=pd.DataFrame(Result)
+#
+# b.to_csv(r'/home/mty/result(14z).csv')
 # boundary = domain(100, basicDomin)
 # cordinate_display(cordinate)
 # encoding_display(newTemp)

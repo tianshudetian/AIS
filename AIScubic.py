@@ -15,7 +15,7 @@ def cubic(x_list,y_list):
     x = x_list - x_list[0]
     y = y_list - y_list[0]
     cs = CubicSpline(x, y)
-    x_new = np.arange(0, max(x)+1, 2)
+    x_new = np.arange(0, max(x)+1, 1)
     y_new = cs(x_new)
     return x_new+x_list[0], y_new+y_list[0]
 
@@ -55,5 +55,4 @@ for MMSI in MMSIs:
                         new_temp['MMSI'] = MMSI
                 result_df.append(new_temp)
 Result = pd.concat(result_df)
-Result.to_csv(r'/home/mty/dadada.csv')
-# test=1
+Result.to_csv(r'/home/mty/20181001(cubic).csv')
