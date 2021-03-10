@@ -10,13 +10,20 @@ def heaviside(value,threshold=0.7):
     else:
         return 0
 
-input_file = r'/home/mty/conflictNUM.csv'
+input_file = r'/home/mty/conflictNUM20181024.csv'
 df = pd.read_csv(input_file)
+
 origin_info = list(df.iloc[:, 1])
-reconstruct_list = pypsr.reconstruct(origin_info, 12, 6)
-k_set=np.zeros(len(reconstruct_list))
-threshold = 0.9
+new_info = []
+for index, row in enumerate(origin_info):
+    if index%2 == 0:
+        new_info.append(row)
 warnings.filterwarnings("error")
+reconstruct_list = pypsr.reconstruct(new_info, 8, 6)
+# for Threshold in np.arange(0.81, 1.00, 0.01):
+#     threshold = round(Threshold, 2)
+threshold = 0.80
+k_set = np.zeros(len(reconstruct_list))
 for index1, vector1 in enumerate(reconstruct_list):
     tem_list = reconstruct_list[index1:, :]
     if len(tem_list) > 1:
@@ -30,5 +37,7 @@ for index1, vector1 in enumerate(reconstruct_list):
             except:
                 pass
 K_set = np.array(k_set)
-# print(K_set)
-np.save('K_set(0.9).npy', K_set)
+print(K_set)
+# np.save('K_set('+str(threshold)+').npy', K_set)
+np.save('K_set(24,8,0.80).npy', K_set)
+    # print(K_set)
