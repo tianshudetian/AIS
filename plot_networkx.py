@@ -53,6 +53,7 @@ print(max(node_list))
 fig1 = plt.figure(figsize=(12, 8))
 ax = fig1.add_subplot(111)
 nx.draw_networkx(G, with_labels=False, node_color='r', node_size=50, alpha=0.8)
+plt.axis("off")
 plt.savefig(r'complex_networkx.png', dpi=600)
 # np.save(r'node_couple_set(0.85).npy', np.array(node_couple_set))
 #
