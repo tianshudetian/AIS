@@ -283,19 +283,26 @@ def indirect4(cordinate):
 df = pd.read_csv(r'/home/mty/data/dynamic/20181001.csv')
 len_df = len_dataset(df)
 Dimension = 2
-latRange = [29.55, 30.1]
-lonRange = [121.9, 122.45]
+# #area1
+# latRange = [29.55, 30.1]
+# lonRange = [121.9, 122.45]
+# #area2
+# latRange = [29.5, 30.2]
+# lonRange = [121.9, 122.45]
+#area3
+latRange = [29.5, 30.2]
+lonRange = [121.8, 122.5]
 cordinate = cordi(df)
-# print('count of ship: '+str(len(cordinate)))
+print('count of ship: '+str(len(cordinate)))
 basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
 Num_stra_conf, Time_stra_conf = direct(cordinate)
 print(Time_stra_conf)
 print(Num_stra_conf)
 # # Result = indirect2(cordinate)
-# Result = indirect1(cordinate)
-# b=pd.DataFrame(Result)
+Result = indirect1(cordinate)
+b=pd.DataFrame(Result)
 #
-# b.to_csv(r'/home/mty/result(14z).csv')
+b.to_csv(r'/home/mty/result(AreaZ3).csv')
 # boundary = domain(100, basicDomin)
 # cordinate_display(cordinate)
 # encoding_display(newTemp)

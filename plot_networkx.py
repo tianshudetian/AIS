@@ -5,6 +5,7 @@ import numpy as np
 import warnings
 import pypsr
 import pandas as pd
+import json
 import community_networkx as cn
 
 
@@ -19,10 +20,13 @@ input_file = r'/home/mty/conflictNUM.csv'
 df = pd.read_csv(input_file)
 
 origin_info = list(df.iloc[:, 1])
+origin_time = list(df.iloc[:, 2])
 new_info = []
+new_time = []
 for index, row in enumerate(origin_info):
     if index%2 == 0:
         new_info.append(row)
+        new_time.append(int(origin_time[index]))
 warnings.filterwarnings("error")
 reconstruct_list = pypsr.reconstruct(new_info, 12, 6)
 threshold = 0.85
@@ -50,11 +54,11 @@ G.add_edges_from(node_couple_set)
 clustering = nx.clustering(G)
 node_list = list(clustering)
 print(max(node_list))
-fig1 = plt.figure(figsize=(12, 8))
-ax = fig1.add_subplot(111)
-nx.draw_networkx(G, with_labels=False, node_color='r', node_size=50, alpha=0.8)
-plt.axis("off")
-plt.savefig(r'complex_networkx.png', dpi=600)
+# fig1 = plt.figure(figsize=(12, 8))
+# ax = fig1.add_subplot(111)
+# nx.draw_networkx(G, with_labels=False, node_color='r', node_size=50, alpha=0.8)
+# plt.axis("off")
+# plt.savefig(r'complex_networkx.png', dpi=600)
 # np.save(r'node_couple_set(0.85).npy', np.array(node_couple_set))
 #
 # fig2 = plt.figure(figsize=(8, 5))
@@ -79,4 +83,13 @@ plt.savefig(r'complex_networkx.png', dpi=600)
 # pos = cn.community_layout(G, partition)
 # nx.draw(G, pos, node_color=list(partition.values()), with_labels=False, node_size=50, alpha=0.8)
 # plt.savefig(r'community_structure.png', dpi=600)
-plt.show()
+
+# communities_generator = community.girvan_newman(G)
+# top_level_communities = next(communities_generator)
+# next_level_communities = next(communities_generator)
+# community_structure = sorted(map(sorted, next_level_communities))
+# with open('data01.json', 'w') as fjson:
+#     json.dump(partition, fjson)
+with open('node_timestamp.json', 'w') as djson:
+    json.dump(new_time, djson)
+# # plt.show()
