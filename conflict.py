@@ -213,7 +213,7 @@ def indirect(cordinate):
     return preConf_num
 
 # if __name__=="__main__":
-df = pd.read_csv(r'/home/mty/data/dynamic/20181024.csv')
+df = pd.read_csv(r'/home/mty/data/dynamic/20181007.csv')
 basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
 len_df = len_dataset(df)
 Dimension = 2
@@ -229,4 +229,4 @@ for index, T in enumerate(new_time):
         Res = indirect(cordinate)
         Result.append([Res, T])
 b = pd.DataFrame(Result)
-b.to_csv(r'/home/mty/conflictNUM20181024.csv')
+b.to_csv(r'/home/mty/conflictNUM20181007.csv')

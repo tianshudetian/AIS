@@ -289,9 +289,12 @@ Dimension = 2
 # #area2
 # latRange = [29.5, 30.2]
 # lonRange = [121.9, 122.45]
+# #area3
+# latRange = [29.5, 30.2]
+# lonRange = [121.8, 122.5]
 #area3
-latRange = [29.5, 30.2]
-lonRange = [121.8, 122.5]
+latRange = [29.5, 30.5]
+lonRange = [121.5, 122.5]
 cordinate = cordi(df)
 print('count of ship: '+str(len(cordinate)))
 basicDomin = ellipseDomain(a=1.6, b=4) # generate the basic domain (L=1)
@@ -302,7 +305,7 @@ print(Num_stra_conf)
 Result = indirect1(cordinate)
 b=pd.DataFrame(Result)
 #
-b.to_csv(r'/home/mty/result(AreaZ3).csv')
+b.to_csv(r'/home/mty/result(AreaZ4).csv')
 # boundary = domain(100, basicDomin)
 # cordinate_display(cordinate)
 # encoding_display(newTemp)

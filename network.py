@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-K_set = np.load('K_set(0.86).npy')
+K_set = np.load('K_set(0.85).npy')
 k_distribute = np.zeros(int(K_set.max()))
 for i in np.arange(0, K_set.max(), 1):
     for K in K_set:
